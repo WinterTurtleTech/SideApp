@@ -15,15 +15,18 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="4*"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="10*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-
-        <Grid Grid.Row="0" Grid.ColumnSpan="5">
+        <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="24" Width="113"
+                   FontSize="10" Text="Can you guess this kanji?" Margin="3,-2,0,0" Grid.ColumnSpan="2"
+                   HorizontalAlignment="Left" Name="tbError" />
+        <Grid Grid.Row="0" Grid.ColumnSpan="2">
             <StackPanel Grid.ColumnSpan="2" HorizontalAlignment="Right" Orientation="Horizontal">
                 <StackPanel.Resources>
                     <Style TargetType="Button">
@@ -36,41 +39,58 @@
                     </Style>
                 </StackPanel.Resources>
                 <Button Name="btLater" Content="+" Click="btLater_Click"/>
-                <Button Name="btSkip" Content=">" Click="btSkip_Click"/>
+                <Button Name="btSkip" Content=">" Click="btSkip_Click" />
                 <Button Name="btClose" Content="X" Click="btClose_Click"/>
             </StackPanel>
         </Grid>
 
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="auto" Width="75"
-                       FontSize="18" TextAlignment="Center" Text="?(´・ω・｀)" 
-                       HorizontalAlignment="Center" Margin="110,0,0,0"/>
-            <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="24" Width="113"
-                       FontSize="10" Text="can you guess this kanji?" 
-                       HorizontalAlignment="Center" Margin="2,10,0,0"/>
-        </StackPanel>
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Label Content="Meaning here" Foreground="WhiteSmoke" FontSize="12" Margin="5 0 0 0"
+                   Grid.Row="1" Grid.ColumnSpan="2" Name="lbMeaning" />
+            <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="25" Width="75"
+                       FontSize="18" TextAlignment="Center" Text="?(´・ω・｀)" Name="tbEmoticon"
+                       HorizontalAlignment="Center" Margin="0,0,0,0" 
+                       Grid.Row="1" Grid.ColumnSpan="3" />
+            <Label Content="Grade here" Foreground="WhiteSmoke" FontSize="12" Margin="0 0 5 0"
+                   Grid.Row="1" Grid.ColumnSpan="2" Name="lbGrade" HorizontalAlignment="Right" />
+        </Grid>
 
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="5" Orientation="Vertical" >
-        <TextBlock Height="40" Width="auto" Foreground="WhiteSmoke" FontSize="30" Text="Haro" 
-                   TextAlignment="Center" Name="tblQuestion"  />            
+        <Grid      Grid.Row="2" Grid.ColumnSpan="5" >
+        <TextBlock Height="auto" Width="80" Foreground="WhiteSmoke" FontSize="12" Text="On or kun here!"
+                   TextWrapping="Wrap" HorizontalAlignment="Left" Margin="10 -3 0 0"/>
+        <TextBlock Height="auto" Width="auto" Foreground="WhiteSmoke" FontSize="20" Text="{Binding Question}" 
+                   TextAlignment="Center" Name="tblQuestion" />            
+        
+        </Grid>
+
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" >
+        <StackPanel.Resources>
+            <Style TargetType="Button">
+                <Setter Property="Height" Value="40" />
+                <Setter Property="Width" Value="50" />
+                <Setter Property="VerticalAlignment" Value="Bottom" />
+                <Setter Property="Foreground" Value="WhiteSmoke" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="3" />
+                <Setter Property="BorderBrush" Value="WhiteSmoke" />
+                <Setter Property="FontWeight" Value="Light" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+            </Style>        
+        </StackPanel.Resources>    
+        
+        <Button Name="btGuessAndExit" Click="btGuessAndExit_Click" FontSize="9" Margin="0,0,12,8"
+        Content="Guess/Exit" Command="{Binding Guessing}" />
+        
         <TextBox Height="40" Width="150" Foreground="WhiteSmoke" Background="Transparent" 
-                 BorderThickness="3" BorderBrush="WhiteSmoke" Name="tbAnswer"
-                 TextAlignment="Center" FontSize="20" Margin="0,3,0,0" />
+        BorderBrush="WhiteSmoke" Name="tbAnswer" BorderThickness="3"
+        TextAlignment="Center" FontSize="20" Margin="0 0.5 0 0" 
+        Text="{Binding Answer, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Button Name="btGuess" Click="btGuess_Click" FontSize="10" Margin="12,0,0,8" 
+        Content="Guess" Command="{Binding Guessing}" />
+        
         </StackPanel>
-
-        <Button Grid.Row="3" Grid.Column="1" Height="40" Width="50" 
-        VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,13,13" 
-        Background="Transparent" Foreground="WhiteSmoke" BorderThickness="3"
-        BorderBrush="WhiteSmoke" Content="Guess" FontWeight="Light"
-        FontSize="10" Name="btGuess" Click="btGuess_Click"                 
-        VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-
-        <Button Grid.Row="3" Grid.Column="0" Height="40" Width="50" 
-        VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="13,0,0,13" 
-        Background="Transparent" Foreground="WhiteSmoke" BorderThickness="3"
-        BorderBrush="WhiteSmoke" Content="Guess/Exit" FontWeight="Light"
-        FontSize="9" Name="btGuessAndExit" Click="btGuessAndExit_Click" 
-        VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-
+        
     </Grid>
 </Window>
