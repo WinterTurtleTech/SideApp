@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Security.Policy;
 using System.Text.Json;
 
 namespace SideApp.Model
@@ -20,5 +21,39 @@ namespace SideApp.Model
 
             return info;
         }
+
+        // This will get the whole list (if works)
+        public async Task<Kanji[]> GetListJLPT5Async(string list)
+        {
+            string url = $"https://kanjiapi.dev/v1/kanji/{list}";
+
+            HttpResponseMessage responce = await client.GetAsync(url);
+
+            responce.EnsureSuccessStatusCode();
+
+            string json = await responce.Content.ReadAsStringAsync();
+
+            Kanji[] randkan = JsonSerializer.Deserialize<Kanji[]>(json);
+
+            return randkan;
+        }
+
+        // This will get just the random Kanji off the list (if works, of course)
+        /*
+        public async Task<Kanji> GetKanjiJLPt5Async(int rand)
+        {
+            string url = $"https://kanjiapi.dev/v1/kanji/jlpt-5[rand]";
+
+            HttpResponseMessage responce = await client.GetAsync(url);
+
+            responce.EnsureSuccessStatusCode();
+
+            string json = await responce.Content.ReadAsStringAsync();
+
+            Kanji randkan = JsonSerializer.Deserialize<Kanji>(json);
+
+            return randkan;
+        }
+        */
     }
 }

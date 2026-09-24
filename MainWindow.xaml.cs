@@ -1,5 +1,4 @@
-﻿using SideApp.Model;
-using SideApp.ViewModels;
+﻿using SideApp.ViewModels;
 using System.Media;
 using System.Windows;
 
@@ -8,7 +7,7 @@ namespace SideApp
     public partial class MainWindow : Window
     {
         // have to check this one
-        static Dictionary<string, string> romajiToHiragana = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        static readonly Dictionary<string, string> romajiToHiragana = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
         // Basic Vowels
         { "a", "あ" }, { "i", "い" }, { "u", "う" }, { "e", "え" }, { "o", "お" },
@@ -43,9 +42,15 @@ namespace SideApp
         public MainWindow()
         {
             InitializeComponent();
-            AnswerTextViewModel nm = new();
-            DataContext = nm;
-            LoadKanji();
+            AnswerTextViewModel vm = new();
+            DataContext = vm;
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            if(DataContext is AnswerTextViewModel vm && vm.KanjiLoad.CanExecute(null)) 
+            {
+                vm.KanjiLoad.Execute(null);
+            }
         }
 
         private void btClose_Click(object sender, RoutedEventArgs e)
@@ -58,16 +63,17 @@ namespace SideApp
             this.Hide();
             await Task.Delay(5000); // 1000 = 1 sec
             this.Show();
-            SystemSounds.Beep.Play();
+            SystemSounds.Question.Play();
         }
 
-        private void btSkip_Click(object sender, RoutedEventArgs e)
+        private async void btSkip_Click(object sender, RoutedEventArgs e)
         {
             tbAnswer.Clear();
             this.Hide();
-            // hides window and then skips the current word, opens on next cycle
-
-            Close();
+            await Task.Delay(5000);
+            Window_Loaded(sender, e);
+            this.Show();
+            SystemSounds.Question.Play();
         }
 
         // somewaysomehow has to constantly check the input from tbAnswer and change it accordingly
@@ -85,38 +91,20 @@ namespace SideApp
             this.Hide();
         }
 
-        private void btGuessAndExit_Click(object sender, RoutedEventArgs e)
+        private async void btGuessAndExit_Click(object sender, RoutedEventArgs e)
         {
             // the same as the other one, but will close the app after waiting
+            await Task.Delay(3000);
             Close();
         }
-        private readonly KanjiService _kanjiService = new KanjiService();
-        private async void LoadKanji()
+
+        private void tbError_TargetUpdated(object sender, System.Windows.Data.DataTransferEventArgs e)
         {
-            // string character = tbAnswer.Text.Trim(); 蛍
-            string character = "蛍";
-            /*
-            if (!string.IsNullOrEmpty(character)) 
-            {
-                lbStatus.Content = "Imput something first";
-                return;
-            }
-            */
-            try
-            {
-                Kanji info = await _kanjiService.GetKanjiAsync(character);
-                string meaning = info.Meaning[0];
-                lbMeaning.Content = meaning; // better change to some expanding element later
-                tblQuestion.Text = info.kanji.ToString();
-            }
-            catch (Exception ex) 
-            {
-                tbError.Text = "Ошибка: " + ex.Message;
+            if(tbError.Text == "Can you guess this kanji?")            
+                tbError.FontSize = 14;            
+            else
                 tbError.FontSize = 8;
-            }
         }
-
-
 
         /* Let me be clear
         First things first, we can implement the active translation from en input from tbAnswer to jap

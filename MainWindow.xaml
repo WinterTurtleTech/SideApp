@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SideApp" Background="#333333"
         mc:Ignorable="d" WindowStyle="None" WindowStartupLocation="Manual"
         Title="MainWindow" Height="150" Width="300" Left="1232" Top="705"
-        ResizeMode="NoResize" >
+        ResizeMode="NoResize" Loaded="Window_Loaded" >
 
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0"/>
@@ -23,9 +23,10 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="24" Width="113"
-                   FontSize="10" Text="Can you guess this kanji?" Margin="3,-2,0,0" Grid.ColumnSpan="2"
-                   HorizontalAlignment="Left" Name="tbError" />
+        <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="Auto" Width="200" Grid.RowSpan="2"
+                   Margin="3,-2,0,0" Grid.ColumnSpan="2" TargetUpdated="tbError_TargetUpdated" 
+                   Text="{Binding Error, TargetNullValue=Can you guess this kanji?, NotifyOnTargetUpdated=True}" 
+                   HorizontalAlignment="Left" Name="tbError" TextWrapping="Wrap" />
         <Grid Grid.Row="0" Grid.ColumnSpan="2">
             <StackPanel Grid.ColumnSpan="2" HorizontalAlignment="Right" Orientation="Horizontal">
                 <StackPanel.Resources>
@@ -40,25 +41,26 @@
                 </StackPanel.Resources>
                 <Button Name="btLater" Content="+" Click="btLater_Click"/>
                 <Button Name="btSkip" Content=">" Click="btSkip_Click" />
-                <Button Name="btClose" Content="X" Click="btClose_Click"/>
+                <Button Name="btClose" Content="X" Click="btClose_Click" />
             </StackPanel>
         </Grid>
-
-        <Grid Grid.Row="1" Grid.ColumnSpan="2">
-            <Label Content="Meaning here" Foreground="WhiteSmoke" FontSize="12" Margin="5 0 0 0"
-                   Grid.Row="1" Grid.ColumnSpan="2" Name="lbMeaning" />
+        
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" >
+            <TextBlock Text="{Binding Meaning, StringFormat='It is a {0}!'}" Foreground="WhiteSmoke" FontSize="12" Margin="5 8 0 0"
+                       Name="lbMeaning" TextWrapping="Wrap" Width="100" HorizontalAlignment="Left"/>
             <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="25" Width="75"
                        FontSize="18" TextAlignment="Center" Text="?(´・ω・｀)" Name="tbEmoticon"
                        HorizontalAlignment="Center" Margin="0,0,0,0" 
                        Grid.Row="1" Grid.ColumnSpan="3" />
-            <Label Content="Grade here" Foreground="WhiteSmoke" FontSize="12" Margin="0 0 5 0"
-                   Grid.Row="1" Grid.ColumnSpan="2" Name="lbGrade" HorizontalAlignment="Right" />
+            <TextBlock Text="{Binding Grade, StringFormat='Grade->{0}'}" Foreground="WhiteSmoke" FontSize="12" Margin="0 8 5 0"
+                       Grid.Row="1" Grid.ColumnSpan="2" Name="lbGrade" HorizontalAlignment="Right" Width="70" VerticalAlignment="Center" />
         </Grid>
 
         <Grid      Grid.Row="2" Grid.ColumnSpan="5" >
-        <TextBlock Height="auto" Width="80" Foreground="WhiteSmoke" FontSize="12" Text="On or kun here!"
-                   TextWrapping="Wrap" HorizontalAlignment="Left" Margin="10 -3 0 0"/>
-        <TextBlock Height="auto" Width="auto" Foreground="WhiteSmoke" FontSize="20" Text="{Binding Question}" 
+        <TextBlock Height="35" Width="110" Foreground="WhiteSmoke" FontSize="14" 
+                   Text="{Binding Kun_Reading, TargetNullValue=Nihao}"
+                   TextWrapping="Wrap" HorizontalAlignment="Left" Margin="10 3 0 0"/>
+        <TextBlock Height="auto" Width="auto" Foreground="WhiteSmoke" FontSize="20" Text="{Binding Question, TargetNullValue=Haro}" 
                    TextAlignment="Center" Name="tblQuestion" />            
         
         </Grid>
