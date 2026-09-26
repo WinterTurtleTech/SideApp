@@ -80,35 +80,14 @@ namespace SideApp.Model
                 
                 if (i + 1 < romaji.Length
                     && c == romaji[i + 1]
-                    && IsConsonant(c)
+                    && IsLatinConsonant(c)
                     && c != 'n')
                 {
                     sb.Append('っ');
                     i++;
                     continue;
                 }
-
-                if (c == 't'
-                    && i + 2 < romaji.Length
-                    && romaji[i + 1] == 'c'
-                    && romaji[i + 2] == 'h')
-                {
-                    sb.Append('っ');
-                }
-
-                if (c == 'n')
-                {
-                    bool nextIsVowelOrY = i + 1 < romaji.Length
-                        && (IsVowel(romaji[i + 1]) || romaji[i + 1] == 'y');
-                    if (nextIsVowelOrY)
-                    {
-                        sb.Append('ん');
-                        i++;
-                        if (i < romaji.Length && romaji[i] == '\'') i++;
-                        continue;
-                    }
-                }
-
+                
                 bool matched = false;
                 foreach (var key in KeysByLength) 
                 {
@@ -133,8 +112,10 @@ namespace SideApp.Model
         }
 
         private static bool IsVowel(char c) => "aiueo".IndexOf(c) >= 0;
-        private static bool IsConsonant(char c) => char.IsLetter(c) && !IsVowel(c);
-        
-
+        private static bool IsLatinConsonant(char c)
+        {
+            char lc = char.ToLowerInvariant(c);
+            return lc >= 'a' && lc <= 'z' && !"aeiou".Contains(lc);
+        }
     }
 }

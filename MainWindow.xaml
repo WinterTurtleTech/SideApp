@@ -47,7 +47,7 @@
         </Grid>
         
         <Grid Grid.Row="1" Grid.ColumnSpan="2" >
-            <TextBlock Text="{Binding Meaning, StringFormat='It is a [{0}]!'}" Foreground="WhiteSmoke" FontSize="12" Margin="5 8 0 0"
+            <TextBlock Text="{Binding Meaning, StringFormat='It means [{0}]!'}" Foreground="WhiteSmoke" FontSize="12" Margin="5 8 0 0"
                        Name="lbMeaning" TextWrapping="Wrap" Width="100" HorizontalAlignment="Left"/>
             <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="25" Width="75"
                        FontSize="18" TextAlignment="Center" Text="?(´・ω・｀)" Name="tbEmoticon"
