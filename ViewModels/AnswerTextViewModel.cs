@@ -23,7 +23,7 @@ namespace SideApp.ViewModels
             }
         }        
 
-        private string answer;
+        private string answer = string.Empty;
         public string Answer
         {
             get => answer;
@@ -88,18 +88,14 @@ namespace SideApp.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+
         #endregion
-        
-        private void CheckAnswer()
-        {
-            if (Answer == kun_Reading)
-            {
-                Answer = "Correct!";
-            }
-            else { Answer = "False!"; }
-        }
-        
+
+        #region KanjiLoading
+
+        static int iteration = 0;
+        static Kanji[] info;
+
         private async void LoadChoosenKanji() 
         {            
             string character = "蛍";
@@ -121,8 +117,7 @@ namespace SideApp.ViewModels
                 Error = ex.Message;                
             }
         }
-        static int iteration = 0;
-        static Kanji[] info;
+        
         private async void LoadKanji() 
         {
             string list = "jlpt-5-enriched";
@@ -146,14 +141,22 @@ namespace SideApp.ViewModels
                 Error = ex.Message;
             }
         }
+        
+        #endregion
+
+        private void CheckAnswer()
+        {
+            if (Answer == kun_Reading)
+            {
+                Question = "Correct!";
+            }
+            else { Question = "False!"; }
+        }
 
         static public void randomizeVal() 
         {
             randomRead = Random.Shared.Next(0,2);
         }
 
-        /*
-         
-        */
     }
 }

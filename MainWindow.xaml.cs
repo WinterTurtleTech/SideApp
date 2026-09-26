@@ -6,39 +6,6 @@ namespace SideApp
 {
     public partial class MainWindow : Window
     {
-        // have to check this one
-        static readonly Dictionary<string, string> romajiToHiragana = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-        // Basic Vowels
-        { "a", "あ" }, { "i", "い" }, { "u", "う" }, { "e", "え" }, { "o", "お" },
-        // K-row
-        { "ka", "か" }, { "ki", "き" }, { "ku", "く" }, { "ke", "け" }, { "ko", "こ" },
-        { "ga", "が" }, { "gi", "ぎ" }, { "gu", "ぐ" }, { "ge", "げ" }, { "go", "ご" },        
-        // S-row
-        { "sa", "さ" }, { "shi", "し" }, { "su", "す" }, { "se", "せ" }, { "so", "そ" },
-        { "za", "ざ" }, { "ji", "じ" }, { "zu", "ず" }, { "ze", "ぜ" }, { "zo", "ぞ" },        
-        // T-row
-        { "ta", "た" }, { "chi", "ち" }, { "tsu", "つ" }, { "te", "て" }, { "to", "と" },
-        { "da", "だ" }, { "de", "で" }, { "do", "ど" }, { "jji", "ぢ" },  { "zzu", "づ" },
-        // N-row
-        { "na", "な" }, { "ni", "に" }, { "nu", "ぬ" }, { "ne", "ね" }, { "no", "の" },        
-        // H-row
-        { "ha", "は" }, { "hi", "ひ" }, { "fu", "ふ" }, { "he", "へ" }, { "ho", "ほ" },
-        { "ba", "ば" }, { "bi", "び" }, { "bu", "ぶ" }, { "be", "べ" }, { "bo", "ぼ" },
-        { "pa", "ぱ" }, { "pi", "ぴ" }, { "pu", "ぷ" }, { "pe", "ぺ" }, { "po", "ぽ" },        
-        // M-row
-        { "ma", "ま" }, { "mi", "み" }, { "mu", "む" }, { "me", "め" }, { "mo", "も" },        
-        // Y-row
-        { "ya", "や" }, { "yu", "ゆ" }, { "yo", "よ" },        
-        // R-row
-        { "ra", "ら" }, { "ri", "り" }, { "ru", "る" }, { "re", "れ" }, { "ro", "ろ" },
-        { "wa", "わ" }, { "wo", "を" }, { "nn", "ん" },
-        // Small row
-        { "la", "ぁ" }, { "li", "ぃ" }, { "lu", "ぅ" }, { "le", "ぇ" }, { "lo", "ぉ" },
-        { "lya", "ゃ" }, { "lyu", "ゅ" }, { "lyo", "ょ" }, { "ltsu", "っ" },
-        { "ltu", "っ" }, { "lsu", "っ" }
-        };
-
         public MainWindow()
         {
             InitializeComponent();
@@ -52,7 +19,16 @@ namespace SideApp
                 vm.KanjiLoad.Execute(null);
             }
         }
+        private void tbError_TargetUpdated(object sender, System.Windows.Data.DataTransferEventArgs e)
+        {
+            if (tbError.Text == "Can you guess this kanji?")
+                tbError.FontSize = 14;
+            else
+            { tbError.FontSize = 8; }
+                      
+        }
 
+        #region UpLeftBt
         private void btClose_Click(object sender, RoutedEventArgs e)
         {
             Close();
@@ -65,7 +41,6 @@ namespace SideApp
             this.Show();
             SystemSounds.Question.Play();
         }
-
         private async void btSkip_Click(object sender, RoutedEventArgs e)
         {
             tbAnswer.Clear();
@@ -75,14 +50,9 @@ namespace SideApp
             this.Show();
             SystemSounds.Question.Play();
         }
+        #endregion
 
-        // somewaysomehow has to constantly check the input from tbAnswer and change it accordingly
-        static string EnJapConvert(string str) 
-        {
-
-            return str;
-        }
-
+        #region GuessingBt
         private async void btGuess_Click(object sender, RoutedEventArgs e)
         {
             // will check the answer and display changes accordingly to result
@@ -97,14 +67,9 @@ namespace SideApp
             await Task.Delay(3000);
             Close();
         }
-
-        private void tbError_TargetUpdated(object sender, System.Windows.Data.DataTransferEventArgs e)
-        {
-            if(tbError.Text == "Can you guess this kanji?")            
-                tbError.FontSize = 14;            
-            else
-                tbError.FontSize = 8;
-        }
+        #endregion
+        
+        
 
         /* Let me be clear
         First things first, we can implement the active translation from en input from tbAnswer to jap
