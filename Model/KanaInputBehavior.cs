@@ -12,6 +12,17 @@ namespace SideApp.Model
                 typeof(bool),
                 typeof(KanaInputBehavior),
                 new PropertyMetadata(false, OnIsEnabledChanged));
+
+        public static readonly DependencyProperty ScriptProperty =
+            DependencyProperty.RegisterAttached(
+                "Script",
+                typeof(KanaScript),
+                typeof(KanaInputBehavior),
+                new PropertyMetadata(KanaScript.Hiragana, OnScriptChanged));
+
+        public static void SetScript(DependencyObject o, KanaScript v) => o.SetValue(ScriptProperty, v);
+        public static KanaScript GetScript(DependencyObject o) => (KanaScript)o.GetValue(ScriptProperty);
+
         public static void SetIsEnabled(DependencyObject o, bool v) 
             => o.SetValue(IsEnabledProperty, v);
         public static bool GetIsEnabled(DependencyObject o) 
@@ -26,28 +37,34 @@ namespace SideApp.Model
             else tb.TextChanged -= OnTextChanged;
         }
 
-        private static void OnTextChanged(object sender, TextChangedEventArgs e)
+        private static void OnScriptChanged(DependencyObject d, DependencyPropertyChangedEventArgs args) 
         {
-            var tb = (TextBox)sender;
-            var state = States.GetOrCreateValue(tb);
+            if(d is TextBox tb) Reconvert(tb);
+        }
 
-            // Reentrancy guard
+        private static void OnTextChanged(object sender, TextChangedEventArgs e)
+            => Reconvert((TextBox)sender);
+
+        private static void Reconvert(TextBox tb)
+        {
+            var state = States.GetOrCreateValue(tb);
             if (state.Suppress) return;
+
+            var script = GetScript(tb); 
 
             var originalText = tb.Text;
             var originalCaret = tb.CaretIndex;
 
-            var converted = EnToJapTrans.Convert(originalText);
+            var converted = EnToJapTrans.Convert(originalText, script);
             if (converted == originalText) return; 
 
-            var convertedPrefix = EnToJapTrans.Convert(
-                originalText.Substring(0, originalCaret));
+            var prefix = EnToJapTrans.Convert(originalText.Substring(0, originalCaret), script);
 
             state.Suppress = true;
             try
             {
                 tb.Text = converted;
-                tb.CaretIndex = convertedPrefix.Length;
+                tb.CaretIndex = prefix.Length;
             }
             finally
             {

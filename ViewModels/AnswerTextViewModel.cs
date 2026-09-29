@@ -76,28 +76,6 @@ namespace SideApp.ViewModels
             }
         }
 
-        //private string? kun_Reading;
-        //public string Kun_Reading
-        //{
-        //    get => kun_Reading;
-        //    set
-        //    {
-        //        kun_Reading = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
-
-        //private string? on_Reading;
-        //public string On_Reading
-        //{
-        //    get => on_Reading;
-        //    set
-        //    {
-        //        on_Reading = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
-
         private int grade;
         public int Grade
         {
@@ -119,7 +97,18 @@ namespace SideApp.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+
+        private string script = "Hiragana";
+        public string Script
+        {
+            get => script;
+            set
+            {
+                script = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region KanjiLoading
@@ -172,12 +161,14 @@ namespace SideApp.ViewModels
                 if (randomRead == 1 && LuckyOne.ReadingKun != null)
                 {
                     Kun_Reading = LuckyOne.ReadingKun;
+                    Script = "Hiragana";
                     Reading = "Enter kunyomi reading!";
                     Error = LuckyOne.ReadingKun[0];
                 }
                 else if(randomRead == 0 || (randomRead == 1 && LuckyOne.ReadingKun == null)) 
                 {
                     On_Reading = LuckyOne.ReadingOn;
+                    Script = "Katakana";
                     Reading = "Enter onyomi reading!";
                     Error = LuckyOne.ReadingOn[0];
                 }

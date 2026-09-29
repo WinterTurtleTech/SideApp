@@ -1,9 +1,12 @@
-﻿using System.Text;
+﻿using System.IO.IsolatedStorage;
+using System.Text;
 
 namespace SideApp.Model
 {
+    public enum KanaScript { Hiragana, Katakana }
     public static class EnToJapTrans
     {
+
         private static readonly Dictionary<string, string> Map = new(StringComparer.OrdinalIgnoreCase)
         {
         { "a","あ" },{ "i","い" },{ "u","う" },{ "e","え" },{ "o","お" },
@@ -50,9 +53,19 @@ namespace SideApp.Model
         };
 
         private static readonly string[] KeysByLength = Map.Keys.OrderByDescending(k => k.Length).ToArray();
-        public static string Convert(string romaji)
+        public static string Convert(string romaji, KanaScript script = KanaScript.Hiragana)
         {
             if (string.IsNullOrEmpty(romaji)) return string.Empty;
+            
+            var input = NormalizeToHiragana(romaji);
+
+            var hira = ConvertToHiraganaCore(input);
+
+            return script == KanaScript.Katakana ? ToKatakana(hira) : hira;
+        }
+
+        private static string ConvertToHiraganaCore(string romaji)
+        {
             romaji = romaji.ToLowerInvariant();
             var sb = new StringBuilder(romaji.Length);
             int i = 0;
@@ -60,13 +73,13 @@ namespace SideApp.Model
             {
                 char c = romaji[i];
 
-                if (c == 'n' && i == romaji.Length - 1) 
+                if (c == 'n' && i == romaji.Length - 1)
                 {
                     sb.Append(c);
                     i++;
                     continue;
                 }
-                
+
                 if (i + 1 < romaji.Length
                     && c == romaji[i + 1]
                     && IsLatinConsonant(c)
@@ -76,12 +89,12 @@ namespace SideApp.Model
                     i++;
                     continue;
                 }
-                
+
                 bool matched = false;
-                foreach (var key in KeysByLength) 
+                foreach (var key in KeysByLength)
                 {
                     if (i + key.Length < romaji.Length) continue;
-                    if(string.Compare(romaji, i, key, 0, key.Length,
+                    if (string.Compare(romaji, i, key, 0, key.Length,
                         StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         sb.Append(Map[key]);
@@ -96,6 +109,28 @@ namespace SideApp.Model
                     sb.Append(c);
                     i++;
                 }
+            }
+            return sb.ToString();
+        }
+
+        private static string ToKatakana(string s)
+        {
+            var sb = new StringBuilder(s.Length);
+            foreach (var c in s)
+            {
+                if (c >= '\u3041' && c <= '\u3096') sb.Append((char)(c + 0x60));
+                else sb.Append(c); // латиница (pending "n"), кандзи, знаки — как есть
+            }
+            return sb.ToString();
+        }
+
+        private static string NormalizeToHiragana(string s) 
+        {
+            var sb = new StringBuilder(s.Length);
+            foreach (var c in s) 
+            {
+                if (c >= '\u30A1' && c <= '\u30F6') sb.Append((char)(c - 0x60));
+                else sb.Append(c);
             }
             return sb.ToString();
         }
