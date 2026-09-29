@@ -6,45 +6,34 @@ namespace SideApp.Model
     {
         private static readonly Dictionary<string, string> Map = new(StringComparer.OrdinalIgnoreCase)
         {
-        // Гласные
         { "a","あ" },{ "i","い" },{ "u","う" },{ "e","え" },{ "o","お" },
 
-        // К
         { "ka","か" },{ "ki","き" },{ "ku","く" },{ "ke","け" },{ "ko","こ" },
         { "kya","きゃ" },{ "kyu","きゅ" },{ "kyo","きょ" },
 
-        // С
         { "sa","さ" },{ "shi","し" },{ "su","す" },{ "se","せ" },{ "so","そ" },
         { "sha","しゃ" },{ "shu","しゅ" },{ "sho","しょ" },
 
-        // Т
         { "ta","た" },{ "chi","ち" },{ "tsu","つ" },{ "te","て" },{ "to","と" },
         { "cha","ちゃ" },{ "chu","ちゅ" },{ "cho","ちょ" },
 
-        // Н
         { "na","な" },{ "ni","に" },{ "nu","ぬ" },{ "ne","ね" },{ "no","の" },
         { "nya","にゃ" },{ "nyu","にゅ" },{ "nyo","にょ" },
         { "n","ん" },{ "nn","ん" },
 
-        // Х
         { "ha","は" },{ "hi","ひ" },{ "fu","ふ" },{ "he","へ" },{ "ho","ほ" },
         { "hya","ひゃ" },{ "hyu","ひゅ" },{ "hyo","ひょ" },
 
-        // М
         { "ma","ま" },{ "mi","み" },{ "mu","む" },{ "me","め" },{ "mo","も" },
         { "mya","みゃ" },{ "myu","みゅ" },{ "myo","みょ" },
 
-        // Я
         { "ya","や" },{ "yu","ゆ" },{ "yo","よ" },
 
-        // Р
         { "ra","ら" },{ "ri","り" },{ "ru","る" },{ "re","れ" },{ "ro","ろ" },
         { "rya","りゃ" },{ "ryu","りゅ" },{ "ryo","りょ" },
 
-        // В
         { "wa","わ" },{ "wo","を" },
 
-        // Г / Д / Б / П / ДЗ
         { "ga","が" },{ "gi","ぎ" },{ "gu","ぐ" },{ "ge","げ" },{ "go","ご" },
         { "gya","ぎゃ" },{ "gyu","ぎゅ" },{ "gyo","ぎょ" },
 
@@ -111,7 +100,6 @@ namespace SideApp.Model
             return sb.ToString();
         }
 
-        private static bool IsVowel(char c) => "aiueo".IndexOf(c) >= 0;
         private static bool IsLatinConsonant(char c)
         {
             char lc = char.ToLowerInvariant(c);

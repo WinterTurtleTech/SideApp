@@ -38,17 +38,21 @@ namespace SideApp.Model
             var originalCaret = tb.CaretIndex;
 
             var converted = EnToJapTrans.Convert(originalText);
-            if (converted == originalText) return; // нечего менять — не трогаем каретку
+            if (converted == originalText) return; 
 
-            // Куда должна встать каретка в НОВОЙ строке?
-            // Конвертируем только префикс до старой каретки — его длина и есть новая позиция.
             var convertedPrefix = EnToJapTrans.Convert(
                 originalText.Substring(0, originalCaret));
 
             state.Suppress = true;
-            tb.Text = converted;
-            tb.CaretIndex = convertedPrefix.Length;
-            state.Suppress = false;
+            try
+            {
+                tb.Text = converted;
+                tb.CaretIndex = convertedPrefix.Length;
+            }
+            finally
+            {
+                state.Suppress = false;
+            }
         }
     }
 }

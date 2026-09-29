@@ -22,7 +22,7 @@ namespace SideApp.Model
             return info;
         }
 
-        // This will get the whole list (if works)
+        // This will get the whole list 
         public async Task<Kanji[]> GetListJLPT5Async(string list)
         {
             string url = $"https://kanjiapi.dev/v1/kanji/{list}";
@@ -39,6 +39,7 @@ namespace SideApp.Model
         }
 
         // This will get just the random Kanji off the list (if works, of course)
+        // it didn't lol
         /*
         public async Task<Kanji> GetKanjiJLPt5Async(int rand)
         {

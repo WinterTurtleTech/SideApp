@@ -6,9 +6,18 @@ namespace SideApp.ViewModels
     internal class AnswerTextViewModel : ViewModelBase
     {
         static int randomRead = 0;
+        string?[] Kun_Reading;
+        string[] On_Reading;
+        readonly string[] HappyEmoticon = { "(♥ω♥*)", "(⁄•⁄ω⁄•⁄)", "(≧◡≦) ♡", "(っ´ω`c)♡", "‘(´▽`ʃ♡ƪ)", "( ‾ʖ̫‾)", 
+        "(๑˃ᴗ˂)ﻭ", "(✧ω✧)", "(´｡• ᵕ •｡`)", "(* ´ ▽ ` *)", "(^_<)〜☆", "(≧∇≦)/", "(≧◡≦)", "(＾ω＾)", "＼(*T▽T*)／",
+        "(*^▽^*)🎂", "(☞ﾟヮﾟ)☞", "(っ˘ω˘ς )", "(*≧∀≦*)", "ヽ(*ﾟдﾟ)ノｶｲﾊﾞｰ" };
+        readonly string[] SadEmoticon = { "(Ｔ▽Ｔ)", "(；一_一)", "(´；Д；｀)", "（πーπ）", "（＞д＜）", "( #`⌂´)/┌┛", 
+        "(ﾉ｀□´)ﾉ⌒┻━┻", "(」｀□´)", "(●´⌓`●)", "(\\｀ﾛ´)\\", "(≧ヘ≦)", "(⇀‸↼‶)", "(*≧Д≦)", "(눈_눈)", "¯\\(°_o)/¯", 
+        "(￣〜￣;)", "(⊙_☉)", "(•ิ_•ิ)", "(ಠ_ಠ)" };
+        readonly string NeutralEmoticon = "?(´・ω・｀)";
         private readonly KanjiService _kanjiService = new KanjiService();
         public ButtonCommands Guessing => new ButtonCommands(execute => CheckAnswer(), canExecute => Answer != "");
-        public ButtonCommands KanjiChoosenLoad => new ButtonCommands(execute => LoadChoosenKanji(), canExecute => true);
+        // public ButtonCommands KanjiChoosenLoad => new ButtonCommands(execute => LoadChoosenKanji(), canExecute => true);
         public ButtonCommands KanjiLoad => new ButtonCommands(execute => LoadKanji(), canExecute => true);
 
         #region MyPrivates
@@ -56,27 +65,38 @@ namespace SideApp.ViewModels
             }
         }
 
-        private string? kun_Reading;
-        public string Kun_Reading
+        private string reading;
+        public string Reading
         {
-            get => kun_Reading;
+            get => reading;
             set
             {
-                kun_Reading = value;
+                reading = value;
                 OnPropertyChanged();
             }
         }
-        
-        private string on_Reading;
-        public string On_Reading
-        {
-            get => on_Reading;
-            set
-            {
-                on_Reading = value;
-                OnPropertyChanged();
-            }
-        }
+
+        //private string? kun_Reading;
+        //public string Kun_Reading
+        //{
+        //    get => kun_Reading;
+        //    set
+        //    {
+        //        kun_Reading = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
+
+        //private string? on_Reading;
+        //public string On_Reading
+        //{
+        //    get => on_Reading;
+        //    set
+        //    {
+        //        on_Reading = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
 
         private int grade;
         public int Grade
@@ -89,19 +109,32 @@ namespace SideApp.ViewModels
             }
         }
 
+        private string emoticon = "?(´・ω・｀)";
+        public string Emoticon
+        {
+            get => emoticon;
+            set
+            {
+                emoticon = value;
+                OnPropertyChanged();
+            }
+        }
+        
         #endregion
 
         #region KanjiLoading
 
         static int iteration = 0;
         static Kanji[] info;
+        int ListSize = 0;
 
+        /*
         private async void LoadChoosenKanji() 
         {            
             string character = "蛍";
             randomizeVal();
-            if (randomRead == 0) { Kun_Reading = character; }
-            else { On_Reading = character; }    
+            if (randomRead == 0) { Kun_Reading[0] = character; }
+            else { On_Reading[0] = character; }    
             try
             {
                 Kanji info = await _kanjiService.GetKanjiAsync(character);
@@ -117,24 +150,38 @@ namespace SideApp.ViewModels
                 Error = ex.Message;                
             }
         }
-        
+        */
         private async void LoadKanji() 
         {
-            string list = "jlpt-5-enriched";
-            int RandNumKanji = Random.Shared.Next(0, 50);
+            Emoticon = NeutralEmoticon;
+            string list = "jlpt-5-enriched";            
             randomizeVal();
             try 
             {
                 if(iteration == 0) {
                     info = await _kanjiService.GetListJLPT5Async(list);
+                    ListSize = info.Length;
                     iteration++;
                 }
+                int RandNumKanji = Random.Shared.Next(0, ListSize);
                 Kanji LuckyOne = info[RandNumKanji];
                 Question = LuckyOne.kanji;
                 Meaning = LuckyOne.Meaning[0];
-                Kun_Reading = LuckyOne.ReadingKun[0];
-                On_Reading = LuckyOne.ReadingOn[0];
                 Grade = LuckyOne.Grade;
+                
+                if (randomRead == 1 && LuckyOne.ReadingKun != null)
+                {
+                    Kun_Reading = LuckyOne.ReadingKun;
+                    Reading = "Enter kunyomi reading!";
+                    Error = LuckyOne.ReadingKun[0];
+                }
+                else if(randomRead == 0 || (randomRead == 1 && LuckyOne.ReadingKun == null)) 
+                {
+                    On_Reading = LuckyOne.ReadingOn;
+                    Reading = "Enter onyomi reading!";
+                    Error = LuckyOne.ReadingOn[0];
+                }
+                                
             }
             catch(Exception ex) 
             {
@@ -144,19 +191,51 @@ namespace SideApp.ViewModels
         
         #endregion
 
-        private void CheckAnswer()
+        private void CheckAnswer() 
         {
-            if (Answer == kun_Reading)
+            bool correct = false;
+            if (randomRead == 0)
+            { correct = ArrayCheck(On_Reading); }
+            else if (randomRead == 1) 
+            { correct = ArrayCheck(Kun_Reading); }
+            else { Error = "Well, I fucked up"; }
+
+            if (correct)
             {
                 Question = "Correct!";
+                GiveMeASmile();
             }
-            else { Question = "False!"; }
+            else if (correct == false) 
+            { Question = "Wrong!"; GiveItAnotherTry(); }
+            else { Question = "something broke"; GiveItAnotherTry(); }            
+        }
+        private bool ArrayCheck(string[] array)
+        {
+            bool found = false;
+            for(int i = 0;  i < array.Length; i++) 
+            { 
+            if (Answer == array[i])
+            {
+                found = true;
+            }            
+            }            
+            if (found == false) { return false; }
+            return true;
         }
 
         static public void randomizeVal() 
         {
-            randomRead = Random.Shared.Next(0,2);
+            randomRead = Random.Shared.Next(0,2);            
         }
-
+        private void GiveMeASmile() 
+        {
+            int Rand = Random.Shared.Next(0,HappyEmoticon.Length);
+            Emoticon = HappyEmoticon[Rand];
+        }
+        private void GiveItAnotherTry()
+        {
+            int Rand = Random.Shared.Next(0, SadEmoticon.Length);
+            Emoticon = SadEmoticon[Rand];
+        }
     }
 }
