@@ -1,5 +1,4 @@
 ﻿using SideApp.ViewModels;
-using System.CodeDom;
 using System.Media;
 using System.Windows;
 
@@ -31,7 +30,7 @@ namespace SideApp
         {
             tbAnswer.Clear();
             this.Hide();
-            await Task.Delay(5000); // 1000 = 1 sec
+            await Task.Delay(300000); // 1000 = 1 sec
             this.Show();
             SystemSounds.Question.Play();
         }
@@ -70,20 +69,18 @@ namespace SideApp
             if (tbError.Text == "Can you guess this kanji?")
                 tbError.FontSize = 14;
             else
-            { tbError.FontSize = 8; }
+            { tbError.FontSize = 10; }
 
         }
 
         /* Ideas
-        add key binding to make pressing enter bound to btGuess for comfort
-        Add Wanikani's "Oops, Kanji reading was expected"?
-        Add a covered-up (needed) reading that will open little by little with each wrong guess, which makes 
-        the guessing easier and learning possible without direct googling each unknown reading
-        */
+        Add key binding to make pressing enter bound to btGuess for comfort
 
-        /*
-            Now it's time to impleent some proper waiting mode that will activate right after the click on Guessing bt
-        since currently it's not really a case.
+        Add a covered-up (needed) reading that will open little by little with each wrong guess, which makes 
+        the guessing easier and learning possible without direct googling each unknown reading =>
+        => partly solved by the addition of hint button
+
+        Impleent some proper waiting mode that will activate right after the click on Guessing bt 
         */
 
     }

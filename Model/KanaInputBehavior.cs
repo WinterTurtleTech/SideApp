@@ -23,10 +23,9 @@ namespace SideApp.Model
         public static void SetScript(DependencyObject o, KanaScript v) => o.SetValue(ScriptProperty, v);
         public static KanaScript GetScript(DependencyObject o) => (KanaScript)o.GetValue(ScriptProperty);
 
-        public static void SetIsEnabled(DependencyObject o, bool v) 
-            => o.SetValue(IsEnabledProperty, v);
-        public static bool GetIsEnabled(DependencyObject o) 
-            => (bool)o.GetValue(IsEnabledProperty);
+        public static void SetIsEnabled(DependencyObject o, bool v) => o.SetValue(IsEnabledProperty, v);
+        public static bool GetIsEnabled(DependencyObject o) => (bool)o.GetValue(IsEnabledProperty);
+        
         private static readonly ConditionalWeakTable<TextBox, State> States = new();
         private sealed class State { public bool Suppress; }
 

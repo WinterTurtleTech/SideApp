@@ -1,5 +1,6 @@
 ﻿using SideApp.Model;
 using SideApp.MVVM;
+using System.Windows;
 
 namespace SideApp.ViewModels
 {
@@ -13,12 +14,13 @@ namespace SideApp.ViewModels
         "(*^▽^*)🎂", "(☞ﾟヮﾟ)☞", "(っ˘ω˘ς )", "(*≧∀≦*)", "ヽ(*ﾟдﾟ)ノｶｲﾊﾞｰ" };
         readonly string[] SadEmoticon = { "(Ｔ▽Ｔ)", "(；一_一)", "(´；Д；｀)", "（πーπ）", "（＞д＜）", "( #`⌂´)/┌┛", 
         "(ﾉ｀□´)ﾉ⌒┻━┻", "(」｀□´)", "(●´⌓`●)", "(\\｀ﾛ´)\\", "(≧ヘ≦)", "(⇀‸↼‶)", "(*≧Д≦)", "(눈_눈)", "¯\\(°_o)/¯", 
-        "(￣〜￣;)", "(⊙_☉)", "(•ิ_•ิ)", "(ಠ_ಠ)" };
+        "(￣〜￣;)", "(⊙_☉)", "(ಠ_ಠ)" };
         readonly string NeutralEmoticon = "?(´・ω・｀)";
         private readonly KanjiService _kanjiService = new KanjiService();
+
         public ButtonCommands Guessing => new ButtonCommands(execute => CheckAnswer(), canExecute => Answer != "");
-        // public ButtonCommands KanjiChoosenLoad => new ButtonCommands(execute => LoadChoosenKanji(), canExecute => true);
         public ButtonCommands KanjiLoad => new ButtonCommands(execute => LoadKanji(), canExecute => true);
+        public ButtonCommands ShowHint => new ButtonCommands(execute => ReadingShow(), canExecute => true);
 
         #region MyPrivates
         private string question = "Haro";
@@ -109,6 +111,17 @@ namespace SideApp.ViewModels
             }
         }
 
+        private string hintVisibility = "Hidden";
+        public string HintVisibility
+        {
+            get => hintVisibility;
+            set
+            {
+                hintVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region KanjiLoading
@@ -116,33 +129,12 @@ namespace SideApp.ViewModels
         static int iteration = 0;
         static Kanji[] info;
         int ListSize = 0;
+        Kanji LuckyOne;
 
-        /*
-        private async void LoadChoosenKanji() 
-        {            
-            string character = "蛍";
-            randomizeVal();
-            if (randomRead == 0) { Kun_Reading[0] = character; }
-            else { On_Reading[0] = character; }    
-            try
-            {
-                Kanji info = await _kanjiService.GetKanjiAsync(character);
-                Meaning = info.Meaning[0]; // better change to some expanding element later
-                Question = info.kanji;
-                // random decision which one will be chosen + check if On is null
-                Kun_Reading = info.ReadingKun[0];
-                On_Reading = info.ReadingOn[0];
-                Grade = info.Grade;
-            }
-            catch (Exception ex)
-            {
-                Error = ex.Message;                
-            }
-        }
-        */
         private async void LoadKanji() 
         {
             Emoticon = NeutralEmoticon;
+            HintVisibility = "Hidden";
             string list = "jlpt-5-enriched";            
             randomizeVal();
             try 
@@ -153,7 +145,7 @@ namespace SideApp.ViewModels
                     iteration++;
                 }
                 int RandNumKanji = Random.Shared.Next(0, ListSize);
-                Kanji LuckyOne = info[RandNumKanji];
+                LuckyOne = info[RandNumKanji];
                 Question = LuckyOne.kanji;
                 Meaning = LuckyOne.Meaning[0];
                 Grade = LuckyOne.Grade;
@@ -163,14 +155,12 @@ namespace SideApp.ViewModels
                     Kun_Reading = LuckyOne.ReadingKun;
                     Script = "Hiragana";
                     Reading = "Enter kunyomi reading!";
-                    Error = LuckyOne.ReadingKun[0];
                 }
                 else if(randomRead == 0 || (randomRead == 1 && LuckyOne.ReadingKun == null)) 
                 {
                     On_Reading = LuckyOne.ReadingOn;
                     Script = "Katakana";
                     Reading = "Enter onyomi reading!";
-                    Error = LuckyOne.ReadingOn[0];
                 }
                                 
             }
@@ -179,9 +169,14 @@ namespace SideApp.ViewModels
                 Error = ex.Message;
             }
         }
-        
+        static public void randomizeVal()
+        {
+            randomRead = Random.Shared.Next(0, 2);
+        }
+
         #endregion
 
+        #region AnswerCheking
         private void CheckAnswer() 
         {
             bool correct = false;
@@ -197,7 +192,7 @@ namespace SideApp.ViewModels
                 GiveMeASmile();
             }
             else if (correct == false) 
-            { Question = "Wrong!"; GiveItAnotherTry(); }
+            { Question = "Wrong!"; GiveItAnotherTry(); HintVisibility = "Visible"; }
             else { Question = "something broke"; GiveItAnotherTry(); }            
         }
         private bool ArrayCheck(string[] array)
@@ -213,14 +208,9 @@ namespace SideApp.ViewModels
             if (found == false) { return false; }
             return true;
         }
-
-        static public void randomizeVal() 
+        private void GiveMeASmile()
         {
-            randomRead = Random.Shared.Next(0,2);            
-        }
-        private void GiveMeASmile() 
-        {
-            int Rand = Random.Shared.Next(0,HappyEmoticon.Length);
+            int Rand = Random.Shared.Next(0, HappyEmoticon.Length);
             Emoticon = HappyEmoticon[Rand];
         }
         private void GiveItAnotherTry()
@@ -228,5 +218,30 @@ namespace SideApp.ViewModels
             int Rand = Random.Shared.Next(0, SadEmoticon.Length);
             Emoticon = SadEmoticon[Rand];
         }
+
+        #endregion
+        
+        #region HintCommand
+        private void ReadingShow()
+        {
+            Question = LuckyOne.kanji;
+            var result = MessageBox.Show(PrintAllOfTheReading(), "Reading", MessageBoxButton.OK);
+        }        
+
+        private string PrintAllOfTheReading()
+        {
+            string Fullreading = "";
+            string[] Readings;
+            if (randomRead == 0) Readings = On_Reading;                          
+            else Readings = Kun_Reading;
+            
+            foreach (var reading in Readings)            
+            Fullreading += $"\"{reading}\" ";
+            
+            return Fullreading;
+        }
+
+        #endregion
+        
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.IO.IsolatedStorage;
-using System.Text;
+﻿using System.Text;
 
 namespace SideApp.Model
 {

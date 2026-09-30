@@ -60,17 +60,16 @@
                         />
         </Grid>
 
-        <Grid Grid.Row="2" Grid.ColumnSpan="5" Grid.RowSpan="2" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="53*"/>
-                <ColumnDefinition Width="47*"/>
-            </Grid.ColumnDefinitions>
+        <Grid Grid.Row="2" Grid.ColumnSpan="2" Grid.RowSpan="2" >            
             <TextBlock Height="35" Width="100" Foreground="WhiteSmoke" FontSize="11" 
                    Text="{Binding Reading, TargetNullValue=404, FallbackValue=Reading}"
                    TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5 -2 0 0"/>
             <TextBlock Height="auto" Width="auto" Foreground="WhiteSmoke" FontSize="20" 
                    Text="{Binding Question, TargetNullValue=Haro, FallbackValue=Question}" 
                    TextAlignment="Center" Name="tblQuestion" Grid.ColumnSpan="2" />
+            <Button Height="35" Width="50" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 0 13 0" 
+                    Background="Transparent" Foreground="WhiteSmoke" BorderThickness="3" BorderBrush="WhiteSmoke"
+                    Content="Answer" FontWeight="Light" FontSize="10" Visibility="{Binding HintVisibility}" Command="{Binding ShowHint}"/>
         </Grid>
 
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" >
