@@ -30,30 +30,14 @@ namespace SideApp
         {
             tbAnswer.Clear();
             this.Hide();
-            await Task.Delay(300000); // 1000 = 1 sec
-            this.Show();
-            SystemSounds.Question.Play();
-        }
-        private async void btSkip_Click(object sender, RoutedEventArgs e)
-        {
-            tbAnswer.Clear();
-            this.Hide();
-            Window_Loaded(sender, e);
-            await Task.Delay(1000);            
+            await Task.Delay(600000); // 1000 = 1 sec
             this.Show();
             SystemSounds.Question.Play();
         }
         #endregion
 
         #region GuessingBt
-        private async void btGuess_Click(object sender, RoutedEventArgs e)
-        {
-            // will check the answer and display changes accordingly to result
-            // wait for few seconds and then hide, getting into waiting mode
-            await Task.Delay(3000);
-            // this.Hide();
-            // starts the cycle 
-        }
+        
 
         private async void btGuessAndExit_Click(object sender, RoutedEventArgs e)
         {
@@ -72,16 +56,16 @@ namespace SideApp
             { tbError.FontSize = 10; }
 
         }
-
+        
         /* Ideas
         Add key binding to make pressing enter bound to btGuess for comfort
 
         Add a covered-up (needed) reading that will open little by little with each wrong guess, which makes 
         the guessing easier and learning possible without direct googling each unknown reading =>
         => partly solved by the addition of hint button
-
-        Impleent some proper waiting mode that will activate right after the click on Guessing bt 
         */
+
+        
 
     }
 }

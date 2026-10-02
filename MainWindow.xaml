@@ -7,12 +7,13 @@
         xmlns:Model="clr-namespace:SideApp.Model"
         mc:Ignorable="d" WindowStyle="None" WindowStartupLocation="Manual"
         Title="MainWindow" Height="150" Width="300" Left="1232" Top="705"
-        ResizeMode="NoResize" Loaded="Window_Loaded" >
+        ResizeMode="NoResize" Loaded="Window_Loaded" 
+        Visibility="{Binding WindowVisibility, Mode=TwoWay, FallbackValue=Visible}" >
 
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
-
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -41,7 +42,7 @@
                     </Style>
                 </StackPanel.Resources>
                 <Button Name="btLater" Content="+" Click="btLater_Click"/>
-                <Button Name="btSkip" Content=">" Click="btSkip_Click" />
+                <Button Name="btSkip" Content=">" Command="{Binding WaitingMode}" />
                 <Button Name="btClose" Content="X" Click="btClose_Click" />
             </StackPanel>
         </Grid>
@@ -89,16 +90,16 @@
             </StackPanel.Resources>
 
             <Button Name="btGuessAndExit" Click="btGuessAndExit_Click" FontSize="9" Margin="0,0,12,8"
-        Content="Guess/Exit" Command="{Binding Guessing}" />
+                    Content="Guess/Exit" Command="{Binding Guessing}" />
 
             <TextBox Height="40" Width="150" Foreground="WhiteSmoke" Background="Transparent" 
-        BorderBrush="WhiteSmoke" Name="tbAnswer" BorderThickness="3"
-        TextAlignment="Center" FontSize="20" Margin="0 0.5 0 0" 
-        Text="{Binding Answer, UpdateSourceTrigger=PropertyChanged}"
-        Model:KanaInputBehavior.IsEnabled="True" Model:KanaInputBehavior.Script="{Binding Script}" />
+                     BorderBrush="WhiteSmoke" Name="tbAnswer" BorderThickness="3"
+                     TextAlignment="Center" FontSize="20" Margin="0 0.5 0 0" 
+                     Text="{Binding Answer, UpdateSourceTrigger=PropertyChanged}"
+                     Model:KanaInputBehavior.IsEnabled="True" Model:KanaInputBehavior.Script="{Binding Script}" />
 
-            <Button Name="btGuess" Click="btGuess_Click" FontSize="10" Margin="12,0,0,8" 
-        Content="Guess" Command="{Binding Guessing}" />
+            <Button Name="btGuess" FontSize="10" Margin="12,0,0,8" 
+                    Content="Guess" Command="{Binding Guessing}" />
 
         </StackPanel>
 

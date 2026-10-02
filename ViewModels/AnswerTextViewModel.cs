@@ -9,30 +9,31 @@ namespace SideApp.ViewModels
         static int randomRead = 0;
         string?[] Kun_Reading;
         string[] On_Reading;
-        readonly string[] HappyEmoticon = { "(♥ω♥*)", "(⁄•⁄ω⁄•⁄)", "(≧◡≦) ♡", "(っ´ω`c)♡", "‘(´▽`ʃ♡ƪ)", "( ‾ʖ̫‾)", 
+        readonly string[] HappyEmoticon = { "(♥ω♥*)", "(⁄•⁄ω⁄•⁄)", "(≧◡≦) ♡", "(っ´ω`c)♡", "‘(´▽`ʃ♡ƪ)", "( ‾ʖ̫‾)",
         "(๑˃ᴗ˂)ﻭ", "(✧ω✧)", "(´｡• ᵕ •｡`)", "(* ´ ▽ ` *)", "(^_<)〜☆", "(≧∇≦)/", "(≧◡≦)", "(＾ω＾)", "＼(*T▽T*)／",
         "(*^▽^*)🎂", "(☞ﾟヮﾟ)☞", "(っ˘ω˘ς )", "(*≧∀≦*)", "ヽ(*ﾟдﾟ)ノｶｲﾊﾞｰ" };
-        readonly string[] SadEmoticon = { "(Ｔ▽Ｔ)", "(；一_一)", "(´；Д；｀)", "（πーπ）", "（＞д＜）", "( #`⌂´)/┌┛", 
-        "(ﾉ｀□´)ﾉ⌒┻━┻", "(」｀□´)", "(●´⌓`●)", "(\\｀ﾛ´)\\", "(≧ヘ≦)", "(⇀‸↼‶)", "(*≧Д≦)", "(눈_눈)", "¯\\(°_o)/¯", 
+        readonly string[] SadEmoticon = { "(Ｔ▽Ｔ)", "(；一_一)", "(´；Д；｀)", "（πーπ）", "（＞д＜）", "( #`⌂´)/┌┛",
+        "(ﾉ｀□´)ﾉ⌒┻━┻", "(」｀□´)", "(●´⌓`●)", "(\\｀ﾛ´)\\", "(≧ヘ≦)", "(⇀‸↼‶)", "(*≧Д≦)", "(눈_눈)", "¯\\(°_o)/¯",
         "(￣〜￣;)", "(⊙_☉)", "(ಠ_ಠ)" };
         readonly string NeutralEmoticon = "?(´・ω・｀)";
         private readonly KanjiService _kanjiService = new KanjiService();
 
-        public ButtonCommands Guessing => new ButtonCommands(execute => CheckAnswer(), canExecute => Answer != "");
-        public ButtonCommands KanjiLoad => new ButtonCommands(execute => LoadKanji(), canExecute => true);
-        public ButtonCommands ShowHint => new ButtonCommands(execute => ReadingShow(), canExecute => true);
+        public ButtonCommands Guessing => new(execute => CheckAnswer(), canExecute => Answer != "");
+        public ButtonCommands KanjiLoad => new(execute => LoadKanji(), canExecute => true);
+        public ButtonCommands ShowHint => new(execute => ReadingShow(), canExecute => true);
+        public ButtonCommands WaitingMode => new(execute => WaitingProcess(), canExecute => true);
 
         #region MyPrivates
         private string question = "Haro";
         public string Question
         {
-            get => question; 
+            get => question;
             set
-            { 
+            {
                 question = value;
                 OnPropertyChanged();
             }
-        }        
+        }
 
         private string answer = string.Empty;
         public string Answer
@@ -40,7 +41,7 @@ namespace SideApp.ViewModels
             get => answer;
             set
             {
-                answer = value; 
+                answer = value;
                 OnPropertyChanged();
             }
         }
@@ -111,13 +112,24 @@ namespace SideApp.ViewModels
             }
         }
 
-        private string hintVisibility = "Hidden";
-        public string HintVisibility
+        private Visibility hintVisibility = Visibility.Hidden;
+        public Visibility HintVisibility
         {
             get => hintVisibility;
             set
             {
                 hintVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Visibility windowVisibility = Visibility.Visible;
+        public Visibility WindowVisibility
+        {
+            get => windowVisibility;
+            set
+            {
+                windowVisibility = value;
                 OnPropertyChanged();
             }
         }
@@ -131,15 +143,15 @@ namespace SideApp.ViewModels
         int ListSize = 0;
         Kanji LuckyOne;
 
-        private async void LoadKanji() 
+        private async void LoadKanji()
         {
-            Emoticon = NeutralEmoticon;
-            HintVisibility = "Hidden";
-            string list = "jlpt-5-enriched";            
+            newIterationReset();
+            string list = "jlpt-5-enriched";
             randomizeVal();
-            try 
+            try
             {
-                if(iteration == 0) {
+                if (iteration == 0)
+                {
                     info = await _kanjiService.GetListJLPT5Async(list);
                     ListSize = info.Length;
                     iteration++;
@@ -149,40 +161,47 @@ namespace SideApp.ViewModels
                 Question = LuckyOne.kanji;
                 Meaning = LuckyOne.Meaning[0];
                 Grade = LuckyOne.Grade;
-                
+
                 if (randomRead == 1 && LuckyOne.ReadingKun != null)
                 {
                     Kun_Reading = LuckyOne.ReadingKun;
                     Script = "Hiragana";
                     Reading = "Enter kunyomi reading!";
                 }
-                else if(randomRead == 0 || (randomRead == 1 && LuckyOne.ReadingKun == null)) 
+                else if (randomRead == 0 || (randomRead == 1 && LuckyOne.ReadingKun == null))
                 {
                     On_Reading = LuckyOne.ReadingOn;
                     Script = "Katakana";
                     Reading = "Enter onyomi reading!";
                 }
-                                
+
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
-                Error = ex.Message;
+                Error = ex.Message; GiveItAnotherTry(); iteration = 0;
             }
         }
         static public void randomizeVal()
         {
             randomRead = Random.Shared.Next(0, 2);
         }
+        public void newIterationReset()
+        {
+            Emoticon = NeutralEmoticon;
+            HintVisibility = Visibility.Hidden;
+            Error = "Can you guess this kanji?";
+            Answer = "";
+        }
 
         #endregion
 
         #region AnswerCheking
-        private void CheckAnswer() 
+        private void CheckAnswer()
         {
             bool correct = false;
             if (randomRead == 0)
             { correct = ArrayCheck(On_Reading); }
-            else if (randomRead == 1) 
+            else if (randomRead == 1)
             { correct = ArrayCheck(Kun_Reading); }
             else { Error = "Well, I fucked up"; }
 
@@ -190,21 +209,22 @@ namespace SideApp.ViewModels
             {
                 Question = "Correct!";
                 GiveMeASmile();
+                WaitingProcess();
             }
-            else if (correct == false) 
-            { Question = "Wrong!"; GiveItAnotherTry(); HintVisibility = "Visible"; }
-            else { Question = "something broke"; GiveItAnotherTry(); }            
+            else if (correct == false)
+            { Question = "Wrong!"; GiveItAnotherTry(); HintVisibility = Visibility.Visible; }
+            else { Question = "something broke"; GiveItAnotherTry(); }
         }
         private bool ArrayCheck(string[] array)
         {
             bool found = false;
-            for(int i = 0;  i < array.Length; i++) 
-            { 
-            if (Answer == array[i])
+            for (int i = 0; i < array.Length; i++)
             {
-                found = true;
-            }            
-            }            
+                if (Answer == array[i])
+                {
+                    found = true;
+                }
+            }
             if (found == false) { return false; }
             return true;
         }
@@ -220,28 +240,44 @@ namespace SideApp.ViewModels
         }
 
         #endregion
-        
+
         #region HintCommand
         private void ReadingShow()
         {
             Question = LuckyOne.kanji;
             var result = MessageBox.Show(PrintAllOfTheReading(), "Reading", MessageBoxButton.OK);
-        }        
+        }
 
         private string PrintAllOfTheReading()
         {
             string Fullreading = "";
             string[] Readings;
-            if (randomRead == 0) Readings = On_Reading;                          
+            if (randomRead == 0) Readings = On_Reading;
             else Readings = Kun_Reading;
-            
-            foreach (var reading in Readings)            
-            Fullreading += $"\"{reading}\" ";
-            
+
+            foreach (var reading in Readings)
+                Fullreading += $"\"{reading}\" ";
+
             return Fullreading;
         }
 
         #endregion
-        
+
+        #region WaitingCommand
+        private async void WaitingProcess() 
+        {
+            await Task.Delay(3000);
+
+            WindowVisibility = Visibility.Hidden;
+            newIterationReset();
+
+            LoadKanji();
+            int RandomWaitTime = Random.Shared.Next(180_000, 1_080_000); // from 30 minutes to 3 hours
+            await Task.Delay(RandomWaitTime);
+
+            WindowVisibility = Visibility.Visible;
+        }
+        #endregion
+
     }
 }
