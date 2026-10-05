@@ -48,9 +48,13 @@
         </Grid>
 
         <Grid Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Top">
-            <TextBlock Text="{Binding Meaning, StringFormat='It means [{0}]!', FallbackValue=Meaning, TargetNullValue=Why?}" 
-                       Foreground="WhiteSmoke" FontSize="12" Margin="5 0 0 0"
-                       Name="lbMeaning" TextWrapping="Wrap" Width="100" HorizontalAlignment="Left"/>
+            <TextBlock Text="{Binding Meaning[0], StringFormat='It means [{0}]!', FallbackValue=Meaning, TargetNullValue=Why?}" 
+                       Foreground="WhiteSmoke" FontSize="12" Margin="5 0 0 0" 
+                       Name="lbMeaning" TextWrapping="Wrap" Width="100" HorizontalAlignment="Left" >
+                <TextBlock.ContextMenu>
+                    <ContextMenu ItemsSource="{Binding Meaning}" />
+                </TextBlock.ContextMenu>
+            </TextBlock>
             <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="25" Width="120"
                        FontSize="18" TextAlignment="Center" Text="{Binding Emoticon, FallbackValue=?(´・ω・｀)}" Name="tbEmoticon"
                        HorizontalAlignment="Center" Margin="0,0,0,0" 

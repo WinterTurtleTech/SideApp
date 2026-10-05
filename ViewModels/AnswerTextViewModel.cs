@@ -46,8 +46,8 @@ namespace SideApp.ViewModels
             }
         }
 
-        private string meaning;
-        public string Meaning
+        private string[] meaning;
+        public string[] Meaning
         {
             get => meaning;
             set
@@ -159,7 +159,7 @@ namespace SideApp.ViewModels
                 int RandNumKanji = Random.Shared.Next(0, ListSize);
                 LuckyOne = info[RandNumKanji];
                 Question = LuckyOne.kanji;
-                Meaning = LuckyOne.Meaning[0];
+                Meaning = LuckyOne.Meaning;
                 Grade = LuckyOne.Grade;
 
                 if (randomRead == 1 && LuckyOne.ReadingKun[0] != "")
