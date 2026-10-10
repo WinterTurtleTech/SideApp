@@ -291,7 +291,7 @@ namespace SideApp.ViewModels
             newIterationReset();
 
             LoadKanji();
-            int RandomWaitTime = Random.Shared.Next(180_000, 1_080_000); // from 30 minutes to 3 hours
+            int RandomWaitTime = Random.Shared.Next(300_000, 1_200_000); // from 5 to 20 minutes
             await Task.Delay(RandomWaitTime);
 
             WindowVisibility = Visibility.Visible;

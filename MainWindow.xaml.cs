@@ -30,7 +30,7 @@ namespace SideApp
         {
             tbAnswer.Clear();
             this.Hide();
-            await Task.Delay(600000); // 1000 = 1 sec
+            await Task.Delay(900000); // 1000 = 1 sec
             this.Show();
             SystemSounds.Question.Play();
         }
