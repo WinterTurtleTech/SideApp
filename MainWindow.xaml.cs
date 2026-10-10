@@ -37,15 +37,20 @@ namespace SideApp
         #endregion
 
         #region GuessingBt
-        
-
         private async void btGuessAndExit_Click(object sender, RoutedEventArgs e)
         {
             // the same as the other one, but will close the app after waiting
             await Task.Delay(3000);
             Close();
         }
-
+        private void btGuess_Click(object sender, RoutedEventArgs e)
+        {
+            tbAnswer.Focus();
+        }
+        private void btHint_Click(object sender, RoutedEventArgs e)
+        {
+            tbAnswer.Focus();
+        }
         #endregion
 
         private void tbError_TargetUpdated(object sender, System.Windows.Data.DataTransferEventArgs e)
@@ -56,16 +61,17 @@ namespace SideApp
             { tbError.FontSize = 10; }
 
         }
-        
+
         /* Ideas
         Add key binding to make pressing enter bound to btGuess for comfort
 
         Add a covered-up (needed) reading that will open little by little with each wrong guess, which makes 
         the guessing easier and learning possible without direct googling each unknown reading =>
         => partly solved by the addition of hint button
-        */
-
         
+                    (or a menu or something)
+        Add a fourth button to the top right corner buttons that will allow to switch the lists with kanji
+        */
 
     }
 }

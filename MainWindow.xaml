@@ -25,7 +25,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="Auto" Width="200" Grid.RowSpan="2"
+        <TextBlock Foreground="WhiteSmoke" Background="Transparent" Height="Auto" Width="180" Grid.RowSpan="2"
                    Margin="3,-2,0,0" Grid.ColumnSpan="2" TargetUpdated="tbError_TargetUpdated" 
                    Text="{Binding Error, TargetNullValue=Can you guess this kanji?, NotifyOnTargetUpdated=True,
                    FallbackValue=ErrorText}" HorizontalAlignment="Left" Name="tbError" TextWrapping="Wrap" />
@@ -39,14 +39,47 @@
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="FontSize" Value="14"/>
                         <Setter Property="Foreground" Value="WhiteSmoke"/>
+                        <Setter Property="FontWeight" Value="Thin" />
+                    </Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="Foreground" Value="WhiteSmoke"/>
+                        <Setter Property="FontWeight" Value="Thin" />
                     </Style>
                 </StackPanel.Resources>
+
+                <ToggleButton x:Name="tbListsToggle" HorizontalAlignment="Left" Width="30"
+                              Background="Transparent" BorderThickness="0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="K" Margin="4 0 0 0" />
+                        <TextBlock Text="▾" Margin="-1.5 0 0 -1" FontSize="10" VerticalAlignment="Bottom"/>
+                    </StackPanel>                    
+                </ToggleButton>
+
+                <Popup IsOpen="{Binding IsChecked, ElementName=tbListsToggle}"
+                       PlacementTarget="{Binding ElementName=tbListsToggle}"
+                       Placement="Top" StaysOpen="False"
+                       AllowsTransparency="False">
+                    <Border BorderThickness="0">
+                        <ItemsControl ItemsSource="{Binding AvaibleLists}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding DisplayName}"
+                                              IsChecked="{Binding IsSelected}"
+                                              Margin="2,3" Foreground="WhiteSmoke"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+                </Popup>
+
                 <Button Name="btLater" Content="+" Click="btLater_Click"/>
                 <Button Name="btSkip" Content=">" Command="{Binding WaitingMode}" />
                 <Button Name="btClose" Content="X" Click="btClose_Click" />
             </StackPanel>
         </Grid>
-
+        
         <Grid Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Top">
             <TextBlock Text="{Binding Meaning[0], StringFormat='It means [{0}]!', FallbackValue=Meaning, TargetNullValue=Why?}" 
                        Foreground="WhiteSmoke" FontSize="12" Margin="5 0 0 0" 
@@ -72,9 +105,11 @@
             <TextBlock Height="auto" Width="auto" Foreground="WhiteSmoke" FontSize="20" 
                    Text="{Binding Question, TargetNullValue=Haro, FallbackValue=Question}" 
                    TextAlignment="Center" Name="tblQuestion" Grid.ColumnSpan="2" />
-            <Button Height="35" Width="50" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 0 13 0" 
-                    Background="Transparent" Foreground="WhiteSmoke" BorderThickness="3" BorderBrush="WhiteSmoke"
-                    Content="Answer" FontWeight="Light" FontSize="10" Visibility="{Binding HintVisibility}" Command="{Binding ShowHint}"/>
+            <Button Height="35" Width="50" VerticalAlignment="Top" HorizontalAlignment="Right" 
+                    Margin="0 0 13 0" Background="Transparent" Foreground="WhiteSmoke" 
+                    BorderThickness="3" BorderBrush="WhiteSmoke" Content="Answer" 
+                    FontWeight="Light" FontSize="10" Name="btHint" Click="btHint_Click"
+                    Visibility="{Binding HintVisibility}" Command="{Binding ShowHint}"/>
         </Grid>
 
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" >
@@ -102,7 +137,7 @@
                      Text="{Binding Answer, UpdateSourceTrigger=PropertyChanged}"
                      Model:KanaInputBehavior.IsEnabled="True" Model:KanaInputBehavior.Script="{Binding Script}" />
 
-            <Button Name="btGuess" FontSize="10" Margin="12,0,0,8" 
+            <Button Name="btGuess" FontSize="10" Margin="12,0,0,8" Click="btGuess_Click"
                     Content="Guess" Command="{Binding Guessing}" />
 
         </StackPanel>

@@ -1,14 +1,15 @@
 ﻿using SideApp.Model;
 using SideApp.MVVM;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace SideApp.ViewModels
 {
     internal class AnswerTextViewModel : ViewModelBase
     {
-        static int randomRead = 0;
+        static int randomRead = 1;
         string?[] Kun_Reading;
-        string[] On_Reading;
+        string[] On_Reading;            
         readonly string[] HappyEmoticon = { "(♥ω♥*)", "(⁄•⁄ω⁄•⁄)", "(≧◡≦) ♡", "(っ´ω`c)♡", "‘(´▽`ʃ♡ƪ)", "( ‾ʖ̫‾)",
         "(๑˃ᴗ˂)ﻭ", "(✧ω✧)", "(´｡• ᵕ •｡`)", "(* ´ ▽ ` *)", "(^_<)〜☆", "(≧∇≦)/", "(≧◡≦)", "(＾ω＾)", "＼(*T▽T*)／",
         "(*^▽^*)🎂", "(☞ﾟヮﾟ)☞", "(っ˘ω˘ς )", "(*≧∀≦*)", "ヽ(*ﾟдﾟ)ノｶｲﾊﾞｰ" };
@@ -16,7 +17,7 @@ namespace SideApp.ViewModels
         "(ﾉ｀□´)ﾉ⌒┻━┻", "(」｀□´)", "(●´⌓`●)", "(\\｀ﾛ´)\\", "(≧ヘ≦)", "(⇀‸↼‶)", "(*≧Д≦)", "(눈_눈)", "¯\\(°_o)/¯",
         "(￣〜￣;)", "(⊙_☉)", "(ಠ_ಠ)" };
         readonly string NeutralEmoticon = "?(´・ω・｀)";
-        private readonly KanjiService _kanjiService = new KanjiService();
+        private readonly KanjiService _kanjiService = new KanjiService();        
 
         public ButtonCommands Guessing => new(execute => CheckAnswer(), canExecute => Answer != "");
         public ButtonCommands KanjiLoad => new(execute => LoadKanji(), canExecute => true);
@@ -137,26 +138,45 @@ namespace SideApp.ViewModels
         #endregion
 
         #region KanjiLoading
+        public ObservableCollection<JLPTListOption> AvaibleLists { get; } = new();
+        public AnswerTextViewModel()
+        {
+            AvaibleLists.Add(new JLPTListOption { Id = "jlpt-5", DisplayName = "JLPT-5", IsSelected=true });
+            AvaibleLists.Add(new JLPTListOption { Id = "jlpt-4", DisplayName = "JLPT-4", IsSelected=true });
+            AvaibleLists.Add(new JLPTListOption { Id = "jlpt-3", DisplayName = "JLPT-3" });
+            AvaibleLists.Add(new JLPTListOption { Id = "jlpt-2", DisplayName = "JLPT-2" });
+            AvaibleLists.Add(new JLPTListOption { Id = "jlpt-1", DisplayName = "JLPT-1" });
+        }
+        public IReadOnlyList<string> SelectedListsIds =>
+            AvaibleLists.Where(o => o.IsSelected).Select(o => o.Id).ToList();
 
-        static int iteration = 0;
-        static Kanji[] info;
-        int ListSize = 0;
+        Kanji[] info;
+        int ListSize;
         Kanji LuckyOne;
-
+        string PrevList = "";
         private async void LoadKanji()
         {
             newIterationReset();
-            string list = "jlpt-5-enriched";
             randomizeVal();
+            string list;
+            if(SelectedListsIds.Count == 0)
+            {
+                list = "jlpt-5-enriched";
+                Error = "Choose the Kanji List you want to study, moron!";
+            }
+            else                
+            {
+                string listID = SelectedListsIds[Random.Shared.Next(SelectedListsIds.Count)];
+                list = $"{listID}-enriched";
+            }
             try
             {
-                if (iteration == 0)
+                if(PrevList != list)
                 {
-                    info = await _kanjiService.GetListJLPT5Async(list);
-                    ListSize = info.Length;
-                    iteration++;
+                    info = await _kanjiService.GetKanjiListAsync(list);
+                    ListSize = info.Count();
                 }
-                int RandNumKanji = Random.Shared.Next(0, ListSize);
+                int RandNumKanji = Random.Shared.Next(0, ListSize++);
                 LuckyOne = info[RandNumKanji];
                 Question = LuckyOne.kanji;
                 Meaning = LuckyOne.Meaning;
@@ -174,11 +194,11 @@ namespace SideApp.ViewModels
                     Script = "Katakana";
                     Reading = "Enter onyomi reading!";
                 }
-
+                PrevList = list;
             }
             catch (Exception ex)
             {
-                Error = ex.Message; GiveItAnotherTry(); iteration = 0;
+                Error = ex.Message; GiveItAnotherTry(); PrevList = "";
             }
         }
         static public void randomizeVal()
@@ -196,7 +216,7 @@ namespace SideApp.ViewModels
         #endregion
 
         #region AnswerCheking
-        private void CheckAnswer()
+        private async Task CheckAnswer()
         {
             bool correct = false;
             if (randomRead == 0)
@@ -209,6 +229,7 @@ namespace SideApp.ViewModels
             {
                 Question = "Correct!";
                 GiveMeASmile();
+                await Task.Delay(3000);
                 WaitingProcess();
             }
             else if (correct == false)
@@ -266,8 +287,6 @@ namespace SideApp.ViewModels
         #region WaitingCommand
         private async void WaitingProcess() 
         {
-            await Task.Delay(3000);
-
             WindowVisibility = Visibility.Hidden;
             newIterationReset();
 
