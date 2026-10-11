@@ -1,4 +1,5 @@
-﻿using SideApp.Model;
+﻿using Microsoft.VisualBasic;
+using SideApp.Model;
 using SideApp.MVVM;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -131,6 +132,28 @@ namespace SideApp.ViewModels
             set
             {
                 windowVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double minTime = 5;
+        public double MinTime
+        {
+            get { return minTime; }
+            set 
+            { 
+                minTime = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double maxTime = 20;
+        public double MaxTime
+        {
+            get { return maxTime; }
+            set 
+            {
+                maxTime = value;
                 OnPropertyChanged();
             }
         }
@@ -288,10 +311,17 @@ namespace SideApp.ViewModels
         private async void WaitingProcess() 
         {
             WindowVisibility = Visibility.Hidden;
-            newIterationReset();
-
+            newIterationReset();            
             LoadKanji();
-            int RandomWaitTime = Random.Shared.Next(300_000, 1_200_000); // from 5 to 20 minutes
+
+            int RandomWaitTime;
+            if (MinTime>MaxTime)
+            {
+                RandomWaitTime = Random.Shared.Next((int)(MaxTime * 60_000), (int)(MinTime * 60_000));
+            }
+            else
+                RandomWaitTime = Random.Shared.Next((int)(MinTime * 60_000), (int)(MaxTime * 60_000));
+
             await Task.Delay(RandomWaitTime);
 
             WindowVisibility = Visibility.Visible;

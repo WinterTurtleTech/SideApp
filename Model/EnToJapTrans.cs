@@ -41,6 +41,7 @@ namespace SideApp.Model
 
         { "za","ざ" },{ "ji","じ" },{ "zu","ず" },{ "ze","ぜ" },{ "zo","ぞ" },
         { "ja","じゃ" },{ "ju","じゅ" },{ "jo","じょ" },
+        { "jya","じゃ" },{ "jyo","じょ" },{ "jyu","じゅ" },
 
         { "da","だ" },{ "di","ぢ" },{ "du","づ" },{ "de","で" },{ "do","ど" },
 
@@ -118,7 +119,7 @@ namespace SideApp.Model
             foreach (var c in s)
             {
                 if (c >= '\u3041' && c <= '\u3096') sb.Append((char)(c + 0x60));
-                else sb.Append(c); // латиница (pending "n"), кандзи, знаки — как есть
+                else sb.Append(c);
             }
             return sb.ToString();
         }

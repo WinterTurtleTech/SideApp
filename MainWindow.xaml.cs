@@ -26,6 +26,7 @@ namespace SideApp
         {
             Close();
         }
+        /*LaterBt
         private async void btLater_Click(object sender, RoutedEventArgs e)
         {
             tbAnswer.Clear();
@@ -34,6 +35,7 @@ namespace SideApp
             this.Show();
             SystemSounds.Question.Play();
         }
+        */
         #endregion
 
         #region GuessingBt
