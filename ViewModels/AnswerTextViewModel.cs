@@ -2,6 +2,7 @@
 using SideApp.Model;
 using SideApp.MVVM;
 using System.Collections.ObjectModel;
+using System.Security.Cryptography;
 using System.Windows;
 
 namespace SideApp.ViewModels
@@ -177,6 +178,7 @@ namespace SideApp.ViewModels
         int ListSize;
         Kanji LuckyOne;
         string PrevList = "";
+        int RandNumKanji = 0;
         private async void LoadKanji()
         {
             newIterationReset();
@@ -199,19 +201,19 @@ namespace SideApp.ViewModels
                     info = await _kanjiService.GetKanjiListAsync(list);
                     ListSize = info.Count();
                 }
-                int RandNumKanji = Random.Shared.Next(0, ListSize++);
+                RandNumKanji = Random.Shared.Next(0, ListSize);
                 LuckyOne = info[RandNumKanji];
                 Question = LuckyOne.kanji;
                 Meaning = LuckyOne.Meaning;
                 Grade = LuckyOne.Grade;
 
-                if (randomRead == 1 && LuckyOne.ReadingKun[0] != "")
+                if (randomRead == 1 && LuckyOne.ReadingKun != null)
                 {
                     Kun_Reading = LuckyOne.ReadingKun;
                     Script = "Hiragana";
                     Reading = "Enter kunyomi reading!";
                 }
-                else if (randomRead == 0 || (randomRead == 1 && LuckyOne.ReadingKun[0] == ""))
+                else if (randomRead == 0 || (randomRead == 1 && LuckyOne.ReadingKun == null))
                 {
                     On_Reading = LuckyOne.ReadingOn;
                     Script = "Katakana";
@@ -222,6 +224,7 @@ namespace SideApp.ViewModels
             catch (Exception ex)
             {
                 Error = ex.Message; GiveItAnotherTry(); PrevList = "";
+                Answer = $"LS{ListSize}+Rand{RandNumKanji}+RR{randomRead}";
             }
         }
         static public void randomizeVal()
