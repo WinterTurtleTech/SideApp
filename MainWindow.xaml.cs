@@ -19,7 +19,10 @@ namespace SideApp
                 vm.KanjiLoad.Execute(null);
             }
         }
-        
+        private void Window_Closed(object sender, EventArgs e)
+        {
+
+        }
 
         #region UpLeftBt
         private void btClose_Click(object sender, RoutedEventArgs e)
@@ -62,7 +65,7 @@ namespace SideApp
             else
             { tbError.FontSize = 10; }
 
-        }
+        }        
 
         /* Ideas
         Add key binding to make pressing enter bound to btGuess for comfort
@@ -71,8 +74,6 @@ namespace SideApp
         the guessing easier and learning possible without direct googling each unknown reading =>
         => partly solved by the addition of hint button
         
-                    (or a menu or something)
-        Add a fourth button to the top right corner buttons that will allow to switch the lists with kanji
         */
 
     }

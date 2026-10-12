@@ -7,7 +7,8 @@
         xmlns:Model="clr-namespace:SideApp.Model"
         mc:Ignorable="d" WindowStyle="None" WindowStartupLocation="Manual"
         Title="MainWindow" Height="150" Width="300" Left="1232" Top="705"
-        ResizeMode="NoResize" Loaded="Window_Loaded" BorderThickness="0.5" BorderBrush="WhiteSmoke"
+        ResizeMode="NoResize" Loaded="Window_Loaded" Closed="Window_Closed" 
+        BorderThickness="0.5" BorderBrush="WhiteSmoke"
         Visibility="{Binding WindowVisibility, Mode=TwoWay, FallbackValue=Visible}" >
 
     <WindowChrome.WindowChrome>
@@ -154,7 +155,7 @@
                    Text="{Binding Question, TargetNullValue=Haro, FallbackValue=Question}" 
                    TextAlignment="Center" Name="tblQuestion" Grid.ColumnSpan="2" />
             <Button Height="35" Width="50" VerticalAlignment="Top" HorizontalAlignment="Right" 
-                    Margin="0 0 13 0" Background="Transparent" Foreground="WhiteSmoke" 
+                    Margin="0 0 12.5 0" Background="Transparent" Foreground="WhiteSmoke" 
                     BorderThickness="3" BorderBrush="WhiteSmoke" Content="Answer" 
                     FontWeight="Light" FontSize="10" Name="btHint" Click="btHint_Click"
                     Visibility="{Binding HintVisibility}" Command="{Binding ShowHint}"/>
@@ -182,8 +183,12 @@
             <TextBox Height="40" Width="150" Foreground="WhiteSmoke" Background="Transparent" 
                      BorderBrush="WhiteSmoke" Name="tbAnswer" BorderThickness="3"
                      TextAlignment="Center" FontSize="20" Margin="0 0.5 0 0" 
-                     Text="{Binding Answer, UpdateSourceTrigger=PropertyChanged}"
-                     Model:KanaInputBehavior.IsEnabled="True" Model:KanaInputBehavior.Script="{Binding Script}" />
+                     Text="{Binding Answer, UpdateSourceTrigger=PropertyChanged}" 
+                     Model:KanaInputBehavior.IsEnabled="True" Model:KanaInputBehavior.Script="{Binding Script}" >
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding Guessing}" Key="Return"/>
+                </TextBox.InputBindings>
+            </TextBox>
 
             <Button Name="btGuess" FontSize="10" Margin="12,0,0,8" Click="btGuess_Click"
                     Content="Guess" Command="{Binding Guessing}" />
