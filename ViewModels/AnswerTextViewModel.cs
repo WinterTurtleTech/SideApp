@@ -10,8 +10,7 @@ namespace SideApp.ViewModels
     internal class AnswerTextViewModel : ViewModelBase
     {
         static int randomRead = 1;
-        string?[] Kun_Reading;
-        string[] On_Reading;            
+        string[] TheReading;       
         readonly string[] HappyEmoticon = { "(♥ω♥*)", "(⁄•⁄ω⁄•⁄)", "(≧◡≦) ♡", "(っ´ω`c)♡", "‘(´▽`ʃ♡ƪ)", "( ‾ʖ̫‾)",
         "(๑˃ᴗ˂)ﻭ", "(✧ω✧)", "(´｡• ᵕ •｡`)", "(* ´ ▽ ` *)", "(^_<)〜☆", "(≧∇≦)/", "(≧◡≦)", "(＾ω＾)", "＼(*T▽T*)／",
         "(*^▽^*)🎂", "(☞ﾟヮﾟ)☞", "(っ˘ω˘ς )", "(*≧∀≦*)", "ヽ(*ﾟдﾟ)ノｶｲﾊﾞｰ" };
@@ -209,13 +208,13 @@ namespace SideApp.ViewModels
 
                 if (randomRead == 1 && LuckyOne.ReadingKun != null)
                 {
-                    Kun_Reading = LuckyOne.ReadingKun;
+                    TheReading = LuckyOne.ReadingKun;
                     Script = "Hiragana";
                     Reading = "Enter kunyomi reading!";
                 }
                 else if (randomRead == 0 || (randomRead == 1 && LuckyOne.ReadingKun == null))
                 {
-                    On_Reading = LuckyOne.ReadingOn;
+                    TheReading = LuckyOne.ReadingOn;
                     Script = "Katakana";
                     Reading = "Enter onyomi reading!";
                 }
@@ -244,13 +243,9 @@ namespace SideApp.ViewModels
         #region AnswerCheking
         private async Task CheckAnswer()
         {
-            bool correct = false;
-            if (randomRead == 0)
-            { correct = ArrayCheck(On_Reading); }
-            else if (randomRead == 1)
-            { correct = ArrayCheck(Kun_Reading); }
-            else { Error = "Well, I fucked up"; }
-
+            bool correct = false;            
+            correct = ArrayCheck(TheReading); 
+            
             if (correct)
             {
                 Question = "Correct!";
@@ -299,8 +294,7 @@ namespace SideApp.ViewModels
         {
             string Fullreading = "";
             string[] Readings;
-            if (randomRead == 0) Readings = On_Reading;
-            else Readings = Kun_Reading;
+            Readings = TheReading;
 
             foreach (var reading in Readings)
                 Fullreading += $"\"{reading}\" ";
