@@ -74,6 +74,9 @@ namespace SideApp
         the guessing easier and learning possible without direct googling each unknown reading =>
         => partly solved by the addition of hint button
         
+        Add a button that will allow to add any kind of words-to-be-remembered-by like they use in wanikani
+        May be a separate app though
+        Or just a way to add a mnem to certain chosen reading, although idk how it will save them tbh
         */
 
     }
