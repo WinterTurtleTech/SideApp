@@ -26,6 +26,7 @@ namespace SideApp
         private void NotifyIcon_Click(object sender, EventArgs e)
         { 
             MainWindow.Show();
+            MainWindow.Activate();
         }
 
         protected override void OnExit(ExitEventArgs e)
