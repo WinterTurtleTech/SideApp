@@ -1,8 +1,6 @@
-﻿using Microsoft.VisualBasic;
-using SideApp.Model;
+﻿using SideApp.Model;
 using SideApp.MVVM;
 using System.Collections.ObjectModel;
-using System.Security.Cryptography;
 using System.Windows;
 
 namespace SideApp.ViewModels
@@ -206,13 +204,13 @@ namespace SideApp.ViewModels
                 Meaning = LuckyOne.Meaning;
                 Grade = LuckyOne.Grade;
 
-                if (randomRead == 1 && (LuckyOne.ReadingKun != null | LuckyOne.ReadingKun.Length != 0))
+                if (randomRead == 1 && IsKunReadingInThisRoom(LuckyOne.ReadingKun) == true)
                 {
                     TheReading = LuckyOne.ReadingKun;
                     Script = "Hiragana";
                     Reading = "Enter kunyomi reading!";
                 }
-                else if (randomRead == 0 || (randomRead == 1 && (LuckyOne.ReadingKun == null | LuckyOne.ReadingKun.Length == 0)))
+                else if (randomRead == 0 || (randomRead == 1 && IsKunReadingInThisRoom(LuckyOne.ReadingKun) == false))
                 {
                     TheReading = LuckyOne.ReadingOn;
                     Script = "Katakana";
@@ -225,6 +223,13 @@ namespace SideApp.ViewModels
                 Error = ex.Message; GiveItAnotherTry(); PrevList = "";
                 Answer = $"LS{ListSize}+Rand{RandNumKanji}+RR{randomRead}";
             }
+        }
+        private bool IsKunReadingInThisRoom(string[] KunReading)
+        {
+            try
+            { if (KunReading.Length == 0 || KunReading == null || KunReading[0] == "") return false; }
+            catch(Exception ex) { Error = "That one fucking [0] check broke again " + ex; return false; }
+            return true;
         }
         static public void randomizeVal()
         {
