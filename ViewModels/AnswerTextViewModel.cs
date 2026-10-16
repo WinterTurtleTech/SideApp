@@ -272,8 +272,7 @@ namespace SideApp.ViewModels
                     found = true;
                 }
             }
-            if (found == false) { return false; }
-            return true;
+            return found;            
         }
         private void GiveMeASmile()
         {
@@ -292,10 +291,10 @@ namespace SideApp.ViewModels
         private void ReadingShow()
         {
             Question = LuckyOne.kanji;
-            var result = MessageBox.Show(PrintAllOfTheReading(), "Reading", MessageBoxButton.OK);
+            var result = MessageBox.Show(PrintAllOfTheReadings(), "Reading", MessageBoxButton.OK);
         }
 
-        private string PrintAllOfTheReading()
+        private string PrintAllOfTheReadings()
         {
             string Fullreading = "";
             string[] Readings;
