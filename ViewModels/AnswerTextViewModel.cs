@@ -227,7 +227,7 @@ namespace SideApp.ViewModels
         private bool IsKunReadingInThisRoom(string[] KunReading)
         {
             try
-            { if (KunReading.Length == 0 || KunReading == null || KunReading[0] == "") return false; }
+            { if (KunReading.Length == 0 || KunReading == null || KunReading[0] == null || KunReading[0] == "") return false; }
             catch(Exception ex) { Error = "That one fucking [0] check broke again " + ex; return false; }
             return true;
         }
