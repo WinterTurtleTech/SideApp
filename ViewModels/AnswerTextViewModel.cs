@@ -206,13 +206,13 @@ namespace SideApp.ViewModels
                 Meaning = LuckyOne.Meaning;
                 Grade = LuckyOne.Grade;
 
-                if (randomRead == 1 && LuckyOne.ReadingKun != null)
+                if (randomRead == 1 && (LuckyOne.ReadingKun != null | LuckyOne.ReadingKun.Length != 0))
                 {
                     TheReading = LuckyOne.ReadingKun;
                     Script = "Hiragana";
                     Reading = "Enter kunyomi reading!";
                 }
-                else if (randomRead == 0 || (randomRead == 1 && LuckyOne.ReadingKun == null))
+                else if (randomRead == 0 || (randomRead == 1 && (LuckyOne.ReadingKun == null | LuckyOne.ReadingKun.Length == 0)))
                 {
                     TheReading = LuckyOne.ReadingOn;
                     Script = "Katakana";
